@@ -1,9 +1,12 @@
 Requisitos previos:
+Requisitos previos:
 
-sudo apt install pipenv o brew install pipenv
-sudo apt install nodejs npm 
-pipenv shell
-pipenv install django==1.11
+brew install pipenv (mac)
+brew install nodejs npm 
+pipenv shell (virtualenv HCMFront)
+pipenv install django==1.11 (pip install django==1.11)
+pipenv install djangorestframework (pip install djangorestframework)
+
 npm install 
 npm run dev  
 
