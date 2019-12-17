@@ -1,0 +1,97 @@
+{% extends '../master.html' %}
+
+{% load staticfiles %}
+
+{% block pagecontent %}
+
+    <div>
+        Listado de Jornadas 
+    </div>
+    
+    <script src="{% static 'frontend/main.js' %}"> </script>
+    
+<!--
+    <table id="grilla" class="table table-hover table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th field="fields.descripcion" style="text-align: left">Descripcion</th>
+            <th field="fields.idtipo" style="text-align: left">Tipo</th>
+            <th posicion="center">Acciones</th>
+            <th field="pk" style="display:none;">ID</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="modal-footer">
+        <a href="front/add/">
+            <button type="button" class="btn btn-primary" data-toggle="modal">
+                <i class="far fa-check-circle"></i> Agregar Nuevo
+            </button>
+        </a>
+    </div>
+-->
+{% endblock %}
+
+{% block custom_scripts %}
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.6/b-html5-1.5.6/b-print-1.5.6/fh-3.1.4/r-2.2.2/sl-1.3.0/datatables.min.js"></script>
+    <script src="{% static 'custom/js/softhelper.js' %}"></script>
+
+    <script type="text/javascript">
+
+        var urlSearch = "";
+        var urlEdit = "";
+        var urlDelete = "";
+
+        $('#btnConfirmDel').click(function (e) {
+            $('#btnConfirmDel').attr("disabled", true);
+            urlP = urlDelete + idGrid + '/';
+            $.ajax({
+                type: "GET",
+                url: urlP,
+                success: function (data) {
+                    $('#deleteModal').modal('toggle');
+                    $('#grilla').DataTable().ajax.reload();
+                },
+                error: function (result) {
+                    alert('Error: Consulte a su administrador para posibles soluciones.');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            ConfigurarFormulario('grilla',
+                urlSearch,
+                urlEdit,
+                [
+                    {"data": "fields.descripcion"},
+                    {"data": "fields.idtipo"},
+                    {
+                        "data": null,
+                        "defaultContent": '<i style="cursor: pointer;" class="center-button fas fa-edit" aria-hidden="true"></i>' + '&nbsp;&nbsp' +
+                        '<i style="cursor: pointer;" class="center-button fas fa-trash-alt" aria-hidden="true"></i>'
+                    },
+                    {"data": "pk"}
+                ],
+                3);
+        });
+
+        $('#grilla tbody').on('click', 'i', function () {
+            var data = $('#grilla').DataTable().row($(this).parents('tr')).data();
+            var class_name = $(this).attr('class');
+            idGrid = data['pk'];
+            if (class_name.includes('fa-edit')) {
+                window.location = urlEdit + data['pk'] + '/';
+            } else {
+                var body = document.getElementsByTagName('body');
+                $('#btnConfirmDel').attr("disabled", false);
+                $(".eliminateClass").html('<b>¿Está seguro que desea eliminar el material: ' + data['fields'].descripcion + '?</b>');
+                $("#deleteModal").modal('show');
+            }
+        });
+    </script>
+
+{% endblock %}
